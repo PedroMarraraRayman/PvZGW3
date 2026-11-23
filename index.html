@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Escolha seu personagem</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Nunito:wght@600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.5.0/model-viewer.min.js"></script>
+</head>
+<body>
+  <main class="screen">
+    <!-- Lista lateral com a foto de cada personagem -->
+    <nav class="roster" id="roster" role="radiogroup" aria-label="Personagens">
+      <h1>Escolha seu personagem</h1>
+    </nav>
+
+    <!-- Palco central: personagem grande, gira só para os lados -->
+    <section class="stage">
+      <model-viewer
+        id="stage-viewer"
+        alt="Personagem selecionado"
+        camera-controls
+        disable-zoom
+        disable-pan
+        auto-rotate
+        auto-rotate-delay="2500"
+        rotation-per-second="20deg"
+        camera-orbit="25deg 80deg auto"
+        min-camera-orbit="-Infinity 80deg auto"
+        max-camera-orbit="Infinity 80deg auto"
+        interaction-prompt="none"
+        shadow-intensity="1"
+        shadow-softness="1">
+      </model-viewer>
+      <div class="platform" aria-hidden="true"></div>
+      <p class="drag-hint">Arraste para girar</p>
+    </section>
+
+    <!-- Informações -->
+    <aside class="info" aria-live="polite">
+      <h2 id="d-name"></h2>
+      <p class="role" id="d-role"></p>
+      <p class="desc" id="d-desc"></p>
+      <ul class="stats" id="d-stats"></ul>
+      <button class="play" id="play" type="button"></button>
+    </aside>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
