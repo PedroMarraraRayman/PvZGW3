@@ -8,26 +8,44 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Nunito:wght@600;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
+  <script type="importmap">
+  { "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+  } }
+  </script>
   <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.5.0/model-viewer.min.js"></script>
 </head>
 <body>
   <main class="screen">
-    <!-- Lista lateral com a foto de cada personagem -->
-    <nav class="roster" id="roster" role="radiogroup" aria-label="Personagens">
-      <h1>Escolha seu personagem</h1>
-    </nav>
+    <!-- fundo decorativo -->
+    <div class="rock r1" aria-hidden="true"></div>
+    <div class="rock r2" aria-hidden="true"></div>
+    <div class="rock r3" aria-hidden="true"></div>
 
-    <!-- Palco central: personagem grande, gira só para os lados -->
+    <!-- Barra do jogador (topo esquerdo) -->
+    <div class="playerbar">
+      <span class="star">★</span>
+      <span class="lvl">1</span>
+      <span class="xp">95</span>
+      <span class="pname">Jogador</span>
+    </div>
+
+    <!-- Lista lateral com os ícones dos personagens -->
+    <nav class="roster" id="roster" role="radiogroup" aria-label="Personagens"></nav>
+
+    <!-- Palco central: personagem sobre a ilha flutuante -->
     <section class="stage">
+      <div class="island" aria-hidden="true">
+        <div class="island-grass"></div>
+        <div class="island-dirt"></div>
+      </div>
       <model-viewer
         id="stage-viewer"
         alt="Personagem selecionado"
         camera-controls
         disable-zoom
         disable-pan
-        auto-rotate
-        auto-rotate-delay="2500"
-        rotation-per-second="20deg"
         camera-orbit="25deg 80deg auto"
         min-camera-orbit="-Infinity 80deg auto"
         max-camera-orbit="Infinity 80deg auto"
@@ -35,19 +53,76 @@
         shadow-intensity="1"
         shadow-softness="1">
       </model-viewer>
-      <div class="platform" aria-hidden="true"></div>
-      <p class="drag-hint">Arraste para girar</p>
     </section>
 
-    <!-- Informações -->
+    <!-- Painel de informações (direita) -->
     <aside class="info" aria-live="polite">
-      <h2 id="d-name"></h2>
-      <p class="role" id="d-role"></p>
-      <p class="desc" id="d-desc"></p>
-      <ul class="stats" id="d-stats"></ul>
+      <div class="banner">Super Elite</div>
+
+      <div class="namesign">
+        <h2 id="d-name"></h2>
+        <p class="rarity">Raridade: <b id="d-rarity"></b></p>
+        <p class="role" id="d-role"></p>
+      </div>
+
+      <div class="levelbox">
+        <p class="level-title">Nível:</p>
+        <div class="level-row">
+          <span class="level-num" id="d-lvl-a">6</span>
+          <div class="level-bar"><span></span></div>
+          <span class="level-num" id="d-lvl-b">7</span>
+        </div>
+      </div>
+
+      <div class="descbox">
+        <p class="desc" id="d-desc"></p>
+        <ul class="stats" id="d-stats"></ul>
+      </div>
+
       <button class="play" id="play" type="button"></button>
     </aside>
+
+    <!-- Dicas de botões (rodapé) -->
+    <footer class="btnbar">
+      <span><i class="key">Arraste</i> Rotacionar</span>
+      <span><i class="key">Enter</i> Jogar</span>
+      <span><i class="key">↑ ↓</i> Trocar</span>
+    </footer>
   </main>
+
+  <!-- Jogo -->
+  <div id="game">
+    <div id="game-canvas"></div>
+    <button id="game-back" type="button">← Voltar</button>
+    <p id="game-hint">Clique na tela para travar o mouse · WASD / setas: mover · mouse: câmera · clique / Espaço: atacar · R: recarregar · Esc: soltar mouse / voltar</p>
+    <p id="game-loading"></p>
+        <div id="hud" aria-hidden="true">
+      <div id="hud-card">
+        <span id="hud-ico">🌱</span>
+        <div><b id="hud-name">Jogador</b><small id="hud-cname"></small></div>
+      </div>
+      <div id="hud-vitals">
+        <div class="hud-xp">
+          <span class="hud-tag">XP</span>
+          <div class="hud-xpbar"><span></span></div>
+          <span class="hud-lv">Nv <b id="hud-lvl">1</b></span>
+        </div>
+        <div class="hud-hp">
+          <div class="hud-heart"><span>♥</span><b id="hud-hp-num">150</b></div>
+          <div class="hud-hpbar"><span id="hud-hp-fill"></span></div>
+        </div>
+      </div>
+      <div id="hud-ammo">
+        <div class="hud-ring"><b id="hud-ammo-num">50</b></div>
+        <small id="hud-ammo-label">MUNIÇÃO</small>
+        <small id="hud-weapon"></small>
+      </div>
+    </div>
+    <div id="crosshair" aria-hidden="true"></div>
+    <div id="heat" aria-hidden="true"><span></span></div>
+    <button id="fire" type="button" aria-label="Atacar">ATACAR</button>
+    <div id="joy"><div id="joy-knob"></div></div>
+  </div>
 
   <script src="app.js"></script>
 </body>

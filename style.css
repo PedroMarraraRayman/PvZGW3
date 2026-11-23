@@ -6,6 +6,9 @@
   --sun: #ffd23f;
   --cream: #fffbe8;
   --ink: #1d2a14;
+  --stone: #cfd3d6;
+  --stone-dark: #8d959b;
+  --pink: #d94fa0;
 }
 
 * { box-sizing: border-box; margin: 0; }
@@ -14,74 +17,144 @@ html, body { height: 100%; overflow: hidden; }
 body {
   font-family: "Nunito", system-ui, sans-serif;
   color: var(--ink);
-  background:
-    linear-gradient(to bottom, var(--sky) 0%, #e9f8ff 55%, transparent 55%),
-    repeating-linear-gradient(90deg, var(--lawn) 0 80px, #58b843 80px 160px);
+  background: #0a2a8a;
 }
 
+/* ---------- Tela de seleção (estilo GW2) ---------- */
 .screen {
+  position: relative;
   height: 100%;
   display: grid;
-  grid-template-columns: 220px 1fr 340px;
+  grid-template-columns: 130px 1fr 380px;
   gap: 24px;
   padding: 24px;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 50% 45%, #5fd0ff 0%, #2f86ff 28%, #1c4fd8 55%, #0b2a96 85%),
+    #0b2a96;
 }
+
+/* espirais de fundo */
+.screen::before {
+  content: "";
+  position: absolute;
+  inset: -50%;
+  background:
+    repeating-conic-gradient(from 0deg at 50% 50%,
+      rgba(255,255,255,.07) 0deg 12deg,
+      rgba(255,255,255,0) 12deg 30deg);
+  animation: spin 80s linear infinite;
+  pointer-events: none;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.screen > * { position: relative; z-index: 1; }
+
+/* pedras flutuando */
+.rock {
+  position: absolute !important;
+  background: #1d1a2e;
+  border-radius: 45% 55% 50% 50%;
+  box-shadow: inset -6px -6px 0 rgba(0,0,0,.35);
+  animation: floaty 6s ease-in-out infinite;
+  z-index: 0 !important;
+}
+.r1 { width: 46px; height: 38px; left: 38%; top: 22%; animation-delay: -1s; }
+.r2 { width: 28px; height: 24px; left: 62%; top: 30%; animation-delay: -3s; }
+.r3 { width: 60px; height: 44px; left: 22%; top: 62%; animation-delay: -2s; }
+@keyframes floaty {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-14px) rotate(8deg); }
+}
+
+/* barra do jogador */
+.playerbar {
+  position: absolute !important;
+  top: 14px; left: 14px;
+  display: flex; align-items: center; gap: 10px;
+  min-width: 360px;
+  padding: 6px 16px 6px 8px;
+  background: linear-gradient(#e6e9ec, #b9c0c6);
+  border: 3px solid #5c666d;
+  border-radius: 6px 24px 6px 6px;
+  font-weight: 800;
+  color: #26323a;
+  box-shadow: 0 3px 0 rgba(0,0,0,.35);
+}
+.playerbar .star {
+  display: grid; place-items: center;
+  width: 30px; height: 30px;
+  background: #2a5bd8; color: #fff;
+  border-radius: 6px;
+}
+.playerbar .lvl { font-family: "Lilita One", sans-serif; font-size: 1.2rem; }
+.playerbar .xp { opacity: .7; }
+.playerbar .pname { font-family: "Lilita One", sans-serif; letter-spacing: .5px; }
 
 /* ---------- Lista lateral ---------- */
 .roster {
+  margin-top: 64px;
   display: flex;
   flex-direction: column;
-  gap: 16px;
-}
-
-h1 {
-  font-family: "Lilita One", sans-serif;
-  font-weight: 400;
-  font-size: 1.7rem;
-  line-height: 1.05;
-  color: var(--cream);
-  -webkit-text-stroke: 2px var(--soil);
-  paint-order: stroke fill;
-  text-shadow: 0 3px 0 var(--soil);
+  gap: 10px;
+  align-self: start;
 }
 
 .thumb {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 4px 4px 8px;
+  position: relative;
+  display: block;
+  width: 100%;
+  padding: 0;
   font: inherit;
   color: inherit;
   cursor: pointer;
-  background: var(--cream);
-  border: 4px solid var(--soil);
-  border-radius: 20px;
-  box-shadow: 0 5px 0 var(--soil);
-  transition: transform .15s, background .15s, box-shadow .15s;
+  background: rgba(10, 30, 90, .55);
+  border: 3px solid #5c666d;
+  border-radius: 6px;
+  box-shadow: 0 3px 0 rgba(0,0,0,.4);
+  transition: transform .15s, border-color .15s, background .15s;
+  overflow: hidden;
 }
 
-.thumb:hover { transform: translateX(6px); }
-.thumb:focus-visible { outline: 4px solid #fff; outline-offset: 3px; }
+.thumb:hover { transform: translateX(4px); background: rgba(40, 90, 200, .6); }
+.thumb:focus-visible { outline: 3px solid #fff; outline-offset: 3px; }
 
 .thumb[aria-checked="true"] {
-  background: var(--sun);
-  transform: translateX(14px);
-  box-shadow: 0 5px 0 var(--soil), 0 0 0 4px #fff;
+  border-color: #fff;
+  background: rgba(255, 210, 63, .45);
+  transform: translateX(10px);
+  box-shadow: 0 0 0 3px #ffd23f, 0 3px 0 rgba(0,0,0,.4);
+}
+
+/* seta indicando o selecionado */
+.thumb[aria-checked="true"]::before {
+  content: "";
+  position: absolute;
+  left: 0; top: 50%;
+  transform: translateY(-50%);
+  border: 9px solid transparent;
+  border-left-color: #fff;
+  z-index: 2;
 }
 
 .thumb model-viewer {
   width: 100%;
-  height: 120px;
+  height: 92px;
   pointer-events: none;
   --poster-color: transparent;
 }
 
 .thumb span {
+  display: block;
+  padding: 2px 0 5px;
+  text-align: center;
   font-family: "Lilita One", sans-serif;
-  font-size: 1.15rem;
+  font-size: .85rem;
+  color: var(--cream);
+  text-shadow: 0 2px 0 rgba(0,0,0,.6);
 }
 
-/* ---------- Palco ---------- */
+/* ---------- Palco + ilha ---------- */
 .stage {
   position: relative;
   min-height: 0;
@@ -92,92 +165,167 @@ h1 {
 
 .stage model-viewer {
   position: relative;
-  z-index: 1;
+  z-index: 2;
   width: 100%;
   height: 100%;
   cursor: grab;
   --poster-color: transparent;
   transition: opacity .25s;
 }
-
 .stage model-viewer:active { cursor: grabbing; }
 .stage model-viewer.loading { opacity: 0; }
 
-.platform {
+.island {
   position: absolute;
-  bottom: 9%;
+  z-index: 1;
+  bottom: 4%;
   left: 50%;
-  width: min(70%, 460px);
-  height: 70px;
+  width: min(80%, 560px);
+  aspect-ratio: 2 / 1.1;
   transform: translateX(-50%);
-  background: radial-gradient(ellipse at center, rgba(58,42,28,.55) 0%, rgba(58,42,28,.25) 50%, transparent 70%);
+  animation: floaty 7s ease-in-out infinite;
+}
+.island-grass {
+  position: absolute;
+  left: 0; right: 0; top: 0;
+  height: 42%;
   border-radius: 50%;
+  background:
+    repeating-linear-gradient(90deg, #6aa83a 0 10px, #7bbc45 10px 20px);
+  border: 4px solid #3f7a22;
+  box-shadow: inset 0 -8px 0 rgba(0,0,0,.15);
 }
-
-.drag-hint {
+.island-dirt {
   position: absolute;
-  bottom: 2%;
-  left: 50%;
-  transform: translateX(-50%);
-  font-weight: 800;
-  font-size: .85rem;
-  color: var(--cream);
-  text-shadow: 0 2px 0 var(--soil);
+  left: 3%; right: 3%;
+  top: 20%; bottom: 0;
+  background: linear-gradient(#6b4a2a, #3a2a1c);
+  clip-path: polygon(0 0, 100% 0, 85% 55%, 62% 100%, 38% 80%, 15% 55%);
+  z-index: -1;
 }
 
-/* ---------- Info ---------- */
+/* ---------- Info (direita) ---------- */
 .info {
   align-self: center;
   display: flex;
   flex-direction: column;
   gap: 12px;
-  padding: 24px;
-  background: var(--cream);
-  border: 4px solid var(--soil);
-  border-radius: 24px;
-  box-shadow: 0 6px 0 var(--soil);
+  margin-top: 40px;
 }
 
-.info h2 {
+.banner {
+  align-self: center;
+  width: 78%;
+  text-align: center;
+  padding: 10px 14px;
+  font-family: "Lilita One", sans-serif;
+  font-size: 1.5rem;
+  color: #fff;
+  background: linear-gradient(#2e6df0, #1946b8);
+  border: 4px solid var(--pink);
+  border-radius: 14px;
+  text-shadow: 0 2px 0 rgba(0,0,0,.45);
+  box-shadow: 0 4px 0 rgba(0,0,0,.35);
+}
+
+.namesign {
+  padding: 14px 22px 14px 26px;
+  background: linear-gradient(#eceff1, #c3c9ce);
+  border: 3px solid #6c757c;
+  clip-path: polygon(0 50%, 6% 0, 100% 0, 100% 100%, 6% 100%);
+  box-shadow: inset 0 0 0 2px rgba(255,255,255,.5);
+}
+.namesign h2 {
   font-family: "Lilita One", sans-serif;
   font-weight: 400;
-  font-size: 2.4rem;
+  font-size: 2.3rem;
   line-height: 1;
+  color: #22303a;
+}
+.rarity { font-size: .85rem; font-weight: 800; color: #4a555d; margin-top: 4px; }
+.rarity b { color: #d2382e; }
+.role { font-weight: 800; font-size: .85rem; color: var(--lawn-dark); }
+
+.levelbox {
+  padding: 10px 16px 14px;
+  background: linear-gradient(#eceff1, #c3c9ce);
+  border: 3px solid #6c757c;
+  border-radius: 6px;
+}
+.level-title { font-weight: 800; font-size: .9rem; color: #26323a; margin-bottom: 6px; }
+.level-row { display: flex; align-items: center; gap: 8px; }
+.level-num { font-family: "Lilita One", sans-serif; font-size: 1.5rem; color: #26323a; }
+.level-bar {
+  flex: 1; height: 18px;
+  background: #3a2a1c;
+  border: 3px solid #26323a;
+  border-radius: 4px;
+  overflow: hidden;
+}
+.level-bar span {
+  display: block; height: 100%; width: 55%;
+  background: linear-gradient(#ffd23f, #f59a1b);
 }
 
-.role { font-weight: 800; color: var(--lawn-dark); }
-.desc { line-height: 1.45; font-weight: 600; }
+.descbox {
+  padding: 12px 16px;
+  background: linear-gradient(#eceff1, #c3c9ce);
+  border: 3px solid #6c757c;
+  border-radius: 6px;
+}
+.desc { font-size: .85rem; line-height: 1.4; font-weight: 700; color: #26323a; }
 
-.stats { list-style: none; padding: 0; display: grid; gap: 8px; margin: 4px 0; }
-
+.stats { list-style: none; padding: 0; display: grid; gap: 6px; margin-top: 10px; }
 .stats li {
   display: grid;
   grid-template-columns: 90px 1fr;
   align-items: center;
   gap: 8px;
   font-weight: 800;
-  font-size: .9rem;
+  font-size: .8rem;
+  color: #26323a;
 }
-
-.bar { height: 12px; background: #e4dcc0; border-radius: 99px; overflow: hidden; }
+.bar { height: 10px; background: #8d959b; border-radius: 99px; overflow: hidden; }
 .bar span { display: block; height: 100%; background: var(--lawn); border-radius: 99px; transition: width .35s; }
 
 .play {
   font-family: "Lilita One", sans-serif;
-  font-size: 1.4rem;
-  padding: 14px 20px;
+  font-size: 1.3rem;
+  padding: 12px 20px;
   color: var(--cream);
   background: var(--lawn-dark);
   border: 4px solid var(--soil);
-  border-radius: 16px;
+  border-radius: 14px;
   box-shadow: 0 5px 0 var(--soil);
   cursor: pointer;
   transition: transform .1s, box-shadow .1s;
 }
-
 .play:hover { background: var(--lawn); }
 .play:active { transform: translateY(4px); box-shadow: 0 1px 0 var(--soil); }
 .play:focus-visible { outline: 4px solid #fff; outline-offset: 3px; }
+
+/* ---------- Barra de botões (rodapé) ---------- */
+.btnbar {
+  position: absolute !important;
+  left: 50%; bottom: 14px;
+  transform: translateX(-50%);
+  display: flex; gap: 28px;
+  font-weight: 800; font-size: .85rem;
+  color: #fff;
+  text-shadow: 0 2px 0 rgba(0,0,0,.6);
+  white-space: nowrap;
+  z-index: 3 !important;
+}
+.btnbar .key {
+  display: inline-block;
+  font-style: normal;
+  padding: 2px 8px;
+  margin-right: 6px;
+  background: #2a2f4a;
+  border: 2px solid #aab;
+  border-radius: 99px;
+  font-size: .75rem;
+}
 
 /* ---------- Responsivo ---------- */
 @media (max-width: 900px) {
@@ -186,17 +334,160 @@ h1 {
     height: auto;
     min-height: 100%;
     grid-template-columns: 1fr;
-    grid-template-rows: auto 60vh auto;
+    grid-template-rows: auto 50vh auto;
     padding: 16px;
+    padding-top: 64px;
   }
-  .roster { flex-direction: row; flex-wrap: wrap; justify-content: center; }
-  .roster h1 { width: 100%; text-align: center; }
+  .playerbar { min-width: 0; right: 14px; }
+  .roster { margin-top: 0; flex-direction: row; justify-content: center; }
   .thumb { flex: 1; min-width: 0; }
   .thumb:hover, .thumb[aria-checked="true"] { transform: translateY(-4px); }
+  .thumb[aria-checked="true"]::before { display: none; }
   .thumb model-viewer { height: 80px; }
-  .thumb span { font-size: .95rem; }
+  .info { margin-top: 0; }
+  .btnbar { display: none; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  * { transition: none !important; }
+  * { transition: none !important; animation: none !important; }
 }
+
+/* ---------- Jogo ---------- */
+#game { position: fixed; inset: 0; display: none; background: var(--sky); touch-action: none; }
+#game.active { display: block; }
+#game-canvas, #game-canvas canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; touch-action: none; }
+
+#game-back {
+  position: absolute; top: 16px; left: 16px;
+  font-family: "Lilita One", sans-serif; font-size: 1.1rem;
+  padding: 8px 16px; color: var(--cream);
+  background: var(--lawn-dark); border: 4px solid var(--soil);
+  border-radius: 14px; box-shadow: 0 4px 0 var(--soil); cursor: pointer;
+}
+#game-back:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--soil); }
+
+#game-hint {
+  position: absolute; bottom: 14px; left: 50%; transform: translateX(-50%);
+  font-weight: 800; font-size: .85rem; color: var(--cream);
+  text-shadow: 0 2px 0 var(--soil); text-align: center; pointer-events: none;
+}
+
+#game-loading {
+  position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+  font-family: "Lilita One", sans-serif; font-size: 1.6rem; color: var(--cream);
+  -webkit-text-stroke: 2px var(--soil); paint-order: stroke fill;
+  text-align: center; max-width: 80%; display: none;
+}
+
+#joy {
+  position: absolute; left: 28px; bottom: 28px; width: 130px; height: 130px;
+  border-radius: 50%; background: rgba(255,251,232,.35); border: 4px solid var(--soil);
+  display: none; touch-action: none;
+}
+#joy-knob {
+  position: absolute; top: 50%; left: 50%; width: 56px; height: 56px; margin: -28px 0 0 -28px;
+  border-radius: 50%; background: var(--sun); border: 4px solid var(--soil); pointer-events: none;
+}
+#crosshair {
+  position: absolute; top: 50%; left: 50%; width: 22px; height: 22px; margin: -11px 0 0 -11px;
+  border: 3px solid var(--cream); border-radius: 50%; pointer-events: none;
+  box-shadow: 0 0 0 2px var(--soil), inset 0 0 0 2px var(--soil);
+}
+#crosshair::after {
+  content: ""; position: absolute; top: 50%; left: 50%; width: 4px; height: 4px; margin: -2px 0 0 -2px;
+  border-radius: 50%; background: var(--sun);
+}
+#fire {
+  position: absolute; right: 28px; bottom: 40px; width: 96px; height: 96px;
+  display: none; border-radius: 50%; touch-action: none;
+  font-family: "Lilita One", sans-serif; font-size: 1rem; color: var(--cream);
+  background: var(--lawn-dark); border: 4px solid var(--soil); box-shadow: 0 5px 0 var(--soil);
+}
+#fire:active { transform: translateY(3px); box-shadow: 0 2px 0 var(--soil); background: var(--lawn); }
+@media (pointer: coarse) {
+  #fire { display: block; }
+  #joy { display: block; }
+  #game-hint { display: none; }
+}
+/* barra de aquecimento do laser (só aparece com o Citrinador) */
+#heat {
+  position: absolute; left: 50%; bottom: 56px; width: 220px; height: 14px; margin-left: -110px;
+  display: none; background: rgba(58,42,28,.55); border: 3px solid var(--soil); border-radius: 99px;
+  overflow: hidden; pointer-events: none;
+}
+#heat span { display: block; height: 100%; width: 0; background: linear-gradient(90deg, #ffd23f, #ff7a00); }
+#heat.hot span { background: #d2382e; }
+#game.laser #heat { display: block; }
+
+/* ---------- HUD do jogo (estilo GW2) ---------- */
+#hud { position: absolute; inset: 0; pointer-events: none; font-family: "Nunito", system-ui, sans-serif; }
+
+/* cartão do jogador (topo, ao lado do botão voltar) */
+#hud-card {
+  position: absolute; top: 16px; left: 150px;
+  display: flex; align-items: center; gap: 10px; min-width: 190px;
+  padding: 6px 18px 6px 8px;
+  background: linear-gradient(#e6e9ec, #b9c0c6);
+  border: 3px solid #5c666d; border-radius: 6px 22px 6px 6px;
+  box-shadow: 0 3px 0 rgba(0,0,0,.35);
+}
+#hud-ico {
+  display: grid; place-items: center; width: 38px; height: 38px; font-size: 1.4rem;
+  background: #2a5bd8; border: 2px solid #1946b8; border-radius: 8px;
+}
+#hud-card b { display: block; font-family: "Lilita One", sans-serif; font-weight: 400; font-size: 1.05rem; line-height: 1.05; color: #26323a; }
+#hud-card small { display: block; font-weight: 800; font-size: .72rem; color: var(--lawn-dark); }
+
+/* vida + XP (canto inferior esquerdo) */
+#hud-vitals { position: absolute; left: 24px; bottom: 24px; width: 300px; display: grid; gap: 6px; }
+.hud-xp { display: flex; align-items: center; gap: 6px; width: 88%; font-weight: 800; font-size: .72rem; color: #fff; text-shadow: 0 2px 0 rgba(0,0,0,.6); }
+.hud-tag { padding: 1px 7px; background: #2a5bd8; border: 2px solid #fff; border-radius: 6px; font-family: "Lilita One", sans-serif; }
+.hud-xpbar { flex: 1; height: 10px; background: rgba(10,20,50,.65); border: 2px solid #fff; border-radius: 99px; overflow: hidden; }
+.hud-xpbar span { display: block; height: 100%; width: 95%; background: linear-gradient(#7fd0ff, #2e86ff); }
+.hud-lv b { font-family: "Lilita One", sans-serif; font-weight: 400; }
+
+.hud-hp { position: relative; display: flex; align-items: center; height: 44px; }
+.hud-heart {
+  position: relative; z-index: 2; flex: none; display: grid; place-items: center;
+  width: 64px; height: 58px; margin-right: -22px; padding-top: 2px;
+  background: linear-gradient(#ff6a86, #d2294a); border: 4px solid #fff; border-radius: 50% 50% 46% 46%;
+  box-shadow: 0 3px 0 rgba(0,0,0,.45);
+  font-family: "Lilita One", sans-serif; color: #fff; text-shadow: 0 2px 0 rgba(0,0,0,.5);
+}
+.hud-heart span { position: absolute; top: -2px; font-size: .7rem; opacity: .7; }
+.hud-heart b { font-weight: 400; font-size: 1.35rem; }
+.hud-hpbar { flex: 1; height: 24px; background: rgba(20,10,20,.7); border: 3px solid #fff; border-radius: 4px 99px 99px 4px; overflow: hidden; box-shadow: 0 3px 0 rgba(0,0,0,.4); }
+.hud-hpbar span { display: block; height: 100%; width: 100%; background: linear-gradient(#ff5a6e, #c4183a); transition: width .2s; }
+.hud-hpbar.low span { animation: hud-blink .6s steps(2) infinite; }
+@keyframes hud-blink { 50% { filter: brightness(1.6); } }
+
+/* munição / carga (canto inferior direito) */
+#hud-ammo { position: absolute; right: 28px; bottom: 24px; width: 120px; display: grid; justify-items: center; gap: 2px; text-align: center; }
+.hud-ring {
+  display: grid; place-items: center; width: 84px; height: 84px; border-radius: 50%;
+  background:
+    radial-gradient(circle, #1d2a3a 0 56%, transparent 58%),
+    conic-gradient(var(--sun) calc(var(--p) * 1%), rgba(255,255,255,.25) 0);
+  border: 4px solid #fff; box-shadow: 0 3px 0 rgba(0,0,0,.45);
+}
+.hud-ring b { font-family: "Lilita One", sans-serif; font-weight: 400; font-size: 1.9rem; color: #fff; text-shadow: 0 2px 0 rgba(0,0,0,.6); }
+#hud-ammo small { font-weight: 800; font-size: .7rem; color: #fff; text-shadow: 0 2px 0 rgba(0,0,0,.7); letter-spacing: .5px; }
+#hud-weapon { color: var(--sun) !important; }
+#hud-ammo.warn .hud-ring b, #hud-ammo.warn #hud-ammo-label { color: #ff8a7a; }
+#hud-ammo.warn .hud-ring { background:
+    radial-gradient(circle, #3a1d22 0 56%, transparent 58%),
+    conic-gradient(#ff6a4a calc(var(--p) * 1%), rgba(255,255,255,.25) 0); }
+
+/* a barra de calor do Citrinador sobe um pouco para não cobrir o HUD */
+#heat { bottom: 96px; }
+
+@media (pointer: coarse) {
+  #hud-vitals { bottom: 176px; width: 250px; }
+  #hud-ammo { bottom: 150px; right: 20px; }
+}
+@media (max-width: 700px) {
+  #hud-card { left: 16px; top: 66px; }
+}
+
+/* dica de controles vai para o topo, para não brigar com o HUD */
+#game-hint { bottom: auto; top: 14px; max-width: 42vw; }
