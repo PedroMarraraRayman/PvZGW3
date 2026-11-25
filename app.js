@@ -6,7 +6,8 @@ const characters = [
     role: "Soldado",
     rarity: "Super Rara",
     level: [6, 7],
-    model: "models/pvz_garden_warfare_2_-_peashooter_deluxe.glb",
+    model: "models/Pea/NewHead.glb",
+    modelHeight: 1.0,   // altura (em metros no jogo) da cabeça sozinha: ajuste aqui se o tamanho não ficar bom
     desc: "Equilibrado e confiável. Atira ervilhas em rajada pela boca e funciona bem em qualquer situação.",
     stats: { Vida: 3, Dano: 3, Mobilidade: 4 },
   },
@@ -271,7 +272,14 @@ async function startGame(character) {
     const box = new THREE.Box3().setFromObject(model);
     const size = box.getSize(new THREE.Vector3());
     const center = box.getCenter(new THREE.Vector3());
-    const k = PLAYER_HEIGHT / size.y;
+    const targetH = character.modelHeight || PLAYER_HEIGHT;
+    const k = targetH / size.y;
+    console.log(`[${character.id}] tamanho original do GLB (x,y,z):`, size.x.toFixed(3), size.y.toFixed(3), size.z.toFixed(3), "| escala aplicada:", k.toFixed(3), "| altura final:", targetH);
+    model.traverse((o) => {
+      if (!o.isMesh) return;
+      const mats = Array.isArray(o.material) ? o.material : [o.material];
+      mats.forEach((m) => console.log(`[${character.id}] malha "${o.name}" material "${m.name}" textura(map):`, m.map ? "SIM" : "NÃO", "| cor:", m.color ? "#" + m.color.getHexString() : "-"));
+    });
     model.scale.setScalar(k);
     model.position.set(-center.x * k, -box.min.y * k, -center.z * k);
     model.traverse((o) => { if (o.isMesh) { o.castShadow = true; o.frustumCulled = false; } });
@@ -744,7 +752,7 @@ async function startGame(character) {
     // (sem pulinhos ao andar)
 
     // câmera nas costas da planta
-    const tx = player.position.x, ty = PLAYER_HEIGHT * 1.0, tz = player.position.z;
+    const tx = player.position.x, ty = (character.modelHeight || PLAYER_HEIGHT) * 1.0, tz = player.position.z;
     const cp = Math.cos(camPitch), sp = Math.sin(camPitch);
     const ox = rx * CAM_SHOULDER, oz = rz * CAM_SHOULDER;
     camera.position.set(tx + ox - fx * cp * CAM_DISTANCE, ty + sp * CAM_DISTANCE, tz + oz - fz * cp * CAM_DISTANCE);
@@ -792,6 +800,7 @@ function findMuzzle(THREE, root, id) {
   if (id === "peashooter") {            // cano na frente da cabeça
     const b = boxOf("headprop");
     if (b) { const F = dirTo(b); p = tip(b, F).addScaledVector(F, 0.08); }
+    else p = new THREE.Vector3(wc.x, whole.min.y + H * 0.5, whole.max.z + 0.05);   // NewHead: frente (+Z), meio da cabeça
   } else if (id === "citron") {         // ponta da arma
     const gl = boxOf("glasses"), w = boxOf("weapon");
     if (gl && w) { const F = dirTo(gl); p = tip(w, F).addScaledVector(F, 0.05); }
