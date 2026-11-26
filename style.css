@@ -404,7 +404,20 @@ body {
   background: var(--lawn-dark); border: 4px solid var(--soil); box-shadow: 0 5px 0 var(--soil);
 }
 #fire:active { transform: translateY(3px); box-shadow: 0 2px 0 var(--soil); background: var(--lawn); }
+#jump {
+  position: absolute; right: 140px; bottom: 40px; width: 76px; height: 76px;
+  display: none; border-radius: 50%; touch-action: none;
+  font-family: "Lilita One", sans-serif; font-size: .85rem; color: var(--cream);
+  background: var(--lawn-dark); border: 4px solid var(--soil); box-shadow: 0 5px 0 var(--soil);
+}
+#jump:active { transform: translateY(3px); box-shadow: 0 2px 0 var(--soil); background: var(--lawn); }
+/* leve vinheta nas bordas da tela, para dar clima de cinema */
+#game-canvas::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background: radial-gradient(ellipse at center, transparent 58%, rgba(0,0,0,.28) 100%);
+}
 @media (pointer: coarse) {
+  #jump { display: block; }
   #fire { display: block; }
   #joy { display: block; }
   #game-hint { display: none; }
